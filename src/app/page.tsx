@@ -1,94 +1,81 @@
+"use client";
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  let [typingString, setTypingString] = useState(
+    "agent cap this is the world we live of same origin quest table rainbow fall dog sick figure"
+  );
+  const [typedString, setTypedString] = useState("");
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+  const [currentWord, setCurrentWord] = useState("");
+
+  // const currentWord = typingString.split(" ")[currentWordIndex];
+
+  useEffect(() => {
+    const handleKeyDown = (e: any) => {
+      if (e.key === " " || e.key === "Space") {
+        console.log("hello");
+        setCurrentWordIndex((prev) => prev + 1);
+        setTypedString((prev) => prev + " ");
+        setCurrentLetterIndex(0);
+      } else {
+        let currentWord = typingString.split(" ")[currentWordIndex];
+        console.log(currentWord); //agent
+
+        const expectedLetter = currentWord[currentLetterIndex];
+        console.log(expectedLetter);
+
+        setTypedString((prev) => prev + e.key);
+        console.log("typed", typedString);
+        setCurrentLetterIndex((prev) => prev + 1);
+        console.log("letterIndex", currentLetterIndex);
+      }
+      // if (currentWordIndex + 1 >= currentWord.length) {
+      //   setCurrentWordIndex((prev) => prev + 1);
+      //   setCurrentLetterIndex(0);
+      // }
+      // setCurrentCharacter(e.key);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [typingString, typedString,currentWord, currentWordIndex, currentLetterIndex]);
+
+  const getStyledString = (word: string,wordIndex:number) => {
+    return word.split("").map((letter, index) => {
+      const typedWord = typedString.split(" ")[wordIndex] || "";
+      const typedLetter = typedWord[index];
+      const isCorrect = letter === typedLetter;
+      console.log("icorect",isCorrect);
+      
+      const isCurrent = wordIndex === currentWordIndex && index === currentLetterIndex;
+
+      return (
+        <span
+          key={letter + index}
+          className={`${styles.letter} ${
+            isCorrect ? styles.right : styles.wrong
+          } ${isCurrent ? styles.current : ""}`}
+        >
+          {letter}
+        </span>
+      );
+    });
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className={styles.test_area}>
+        {typingString?.split(" ").map((word, i) => (
+          <div className={styles.word} key={word + i}>
+            {getStyledString(word,i)}
+          </div>
+        ))}
       </div>
     </main>
   );
