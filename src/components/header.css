@@ -1,0 +1,20 @@
+.header{
+    /* background-color: rgb(160, 160, 220); */
+    padding: 30px 0;
+}
+
+.header nav div a:nth-child(1){
+    font-size: 1.3em;
+}
+.header nav svg {
+    /* font-size: 1em; */
+    width: 40px;
+    /* height: 10px; */
+}
+.header nav {
+    max-width: var(--max-width);
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

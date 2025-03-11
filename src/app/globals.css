@@ -1,5 +1,6 @@
 :root {
-
+  background-color: rgb(150, 118, 202);
+  --max-width : 1280px;
 }
 * {
   box-sizing: border-box;
