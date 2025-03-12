@@ -20,14 +20,14 @@ import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
 
 const Page = () => {
-  const [isModelOpen, setIsModelOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleModel = () => {
-    setIsModelOpen((prev)=> !prev);
+  const handleModal = () => {
+    setIsModalOpen((prev)=> !prev);
   }
 
   const closeModal = () => {
-    setIsModelOpen((prev)=>!prev);
+    setIsModalOpen((prev)=>!prev);
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const Page = () => {
       }
     };
 
-    if (isModelOpen) {
+    if (isModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -47,7 +47,7 @@ const Page = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isModelOpen]);
+  }, [isModalOpen]);
 
   return (
     <div className="page">
@@ -115,13 +115,13 @@ const Page = () => {
               <Link href={""}><FaLock /> privacy</Link>
             </div>
             <div>
-              <button onClick={() => handleModel()}><FaPalette /> rose pine</button>
+              <button onClick={() => handleModal()}><FaPalette /> rose pine</button>
               <button><IoIosGitBranch /> v2.23.4</button>
             </div>
           </div>
         </div>
       </footer>
-    {isModelOpen && <Modal />}
+    {isModalOpen && <Modal />}
     </div>
   );
 };

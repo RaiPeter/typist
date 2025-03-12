@@ -13,7 +13,14 @@
 .modal .themes{
     display: flex;
     flex-direction: column;
-    padding: 10px;
     row-gap: 5px;
+}
+.modal .themes label{
+    padding: 10px;
+    cursor: pointer;
+}
 
+.modal .themes label:hover{
+    background-color: var(--background-color);
+    color: var(--hover-text-color);
 }
