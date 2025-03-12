@@ -4,13 +4,15 @@
     align-items: center;
     /* min-height: 100vh; */
     padding: 20px;
+    max-width: var(--max-width);
+    margin: auto;
+    height: 240px;
   }
   
   .text {
     font-family: monospace;
     font-size: 1.2rem;
     line-height: 1.5;
-    max-width: 800px;
   }
   
   .word {

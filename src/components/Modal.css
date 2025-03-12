@@ -1,0 +1,19 @@
+.modal{
+    background-color: var(--mode-row-bg-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 500px;
+    height: 300px;
+    z-index: 100;
+    box-shadow: 0 0 3px 0 rgb(69 69 69);
+    overflow-y: auto;
+}
+.modal .themes{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    row-gap: 5px;
+
+}

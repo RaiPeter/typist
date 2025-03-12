@@ -21,7 +21,7 @@ interface LetterProps {
 }
 
 export default function Typing() {
-  const originalText: string = "the quick brown fox jumps over the lazy dog";
+  const originalText: string = "the quick brown fox jump asd asdf as dfasdfasd fasdf asd asd fasdf asd s over the lazy dog";
   const words: string[] = originalText.split(" ");
 
   const [typedText, setTypedText] = useState<string>("");

@@ -1,3 +1,4 @@
+"use client";
 import Header from "@/components/header";
 import Typing from "@/components/Typing";
 import "./page.css";
@@ -15,8 +16,39 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { IoIosGitBranch } from "react-icons/io";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import Modal from "@/components/Modal";
 
 const Page = () => {
+  const [isModelOpen, setIsModelOpen] = useState(false);
+
+  const handleModel = () => {
+    setIsModelOpen((prev)=> !prev);
+  }
+
+  const closeModal = () => {
+    setIsModelOpen((prev)=>!prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const modal = document.querySelector(".modal");
+      if (modal && !modal.contains(event.target as Node)) {
+        closeModal();
+      }
+    };
+
+    if (isModelOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModelOpen]);
+
   return (
     <div className="page">
       <Header />
@@ -83,12 +115,13 @@ const Page = () => {
               <Link href={""}><FaLock /> privacy</Link>
             </div>
             <div>
-              <button><FaPalette /> rose pine</button>
+              <button onClick={() => handleModel()}><FaPalette /> rose pine</button>
               <button><IoIosGitBranch /> v2.23.4</button>
             </div>
           </div>
         </div>
       </footer>
+    {isModelOpen && <Modal />}
     </div>
   );
 };
