@@ -1,15 +1,19 @@
+main{
+  height: 70vh;
+}
 .page{
     height: 100vh;
 }
 .type-mode-bar {
   max-width: fit-content;
   border-radius: 5px;
-  background-color: rgb(139, 12, 178);
+  background-color: var(--mode-row-bg-color);
   margin: auto;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   padding: 0 20px;
+  box-shadow: 0px 0px 1px 0px #353232;
 }
 .type-mode-bar > div {
   display: flex;
@@ -18,7 +22,7 @@
 .type-mode-bar #spacer {
   height: 1em;
   width: 4px;
-  background-color: blanchedalmond;
+  background-color: var(--hover-text-color);
   border-radius: 10px;
   margin: 0 13px;
 }
@@ -35,24 +39,26 @@
 }
 
 .type-mode-bar button:hover {
-  color: white;
+  color: var(--hover-text-color);
   transition: color 0.2s ease-in;
 }
 
 .footer{
     max-width: var(--max-width);
     margin: auto;
-    background-color: gray;
+    /* background-color: gray; */
 }
 .footer > div .row{
     /* background-color: forestgreen; */
     display: flex;
     justify-content: center;
-}
-
-.footer > div .row div{
-    background-color: rgb(145, 108, 108);
+  }
+  
+  .footer > div .row div{
+    background-color: var(--text-color);
+    color: var(--background-color);
     padding: 2px 6px;
+    margin-bottom: 20px;
 }
 .footer .links{
     display: flex;
@@ -77,9 +83,10 @@
 .footer .links button{
     padding: 0 5px;
     transition: color 0.2s ease-in;
+    cursor: pointer;
 }
 
 .footer .links a:hover,
 .footer .links button:hover{
-    color: white;
+    color: var(--hover-text-color);
 }

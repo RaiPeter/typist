@@ -18,3 +18,10 @@
     justify-content: space-between;
     align-items: center;
 }
+.header nav a{
+    cursor: pointer;
+}
+
+.header nav a:hover{
+    color: var(--hover-text-color);
+}
