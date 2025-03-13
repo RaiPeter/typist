@@ -24,9 +24,11 @@ interface TypingProps {
   text: string;
   mode: "time" | "words" | "quote" | "zen" | "custom";
   duration: number;
+  modeBarRef: React.RefObject<HTMLDivElement>;
+  footerLinkRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function Typing({ text, mode, duration }: TypingProps) {
+export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }: TypingProps) {
   const words: string[] = text.split(" ");
   console.log("Typing Component - Received Text:", text);
   console.log("Typing Component - Words Array:", words);
@@ -40,7 +42,7 @@ export default function Typing({ text, mode, duration }: TypingProps) {
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [isBlurred, setIsBlurred] = useState<boolean>(false);
-  
+
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
   // ref for each word
@@ -87,14 +89,27 @@ export default function Typing({ text, mode, duration }: TypingProps) {
   }, [currentWordIndex]);
 
   useEffect(()=>{
-    const handleClickOutside = (event : MouseEvent) => {
-      if(textContainerRef.current && !textContainerRef.current.contains(event.target as Node)){
-        setIsBlurred(true);
-      }else{
-        console.log("Clicked inside, removing blurr");
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Check if the click is inside the text container
+      const isClickInsideText = textContainerRef.current && textContainerRef.current.contains(target);
+
+      // Check if the click is inside the mode bar
+      const isClickInsideModeBar = modeBarRef.current && modeBarRef.current.contains(target);
+      const isClickInsideFooterLink = footerLinkRef.current && footerLinkRef.current.contains(target);
+
+      if (isClickInsideText) {
+        console.log("Click inside text container, removing blur");
         setIsBlurred(false);
+      } else if (isClickInsideModeBar || isClickInsideFooterLink) {
+        console.log("Click inside mode bar, not applying blur");
+      } else {
+        console.log("Click outside, applying blur");
+        setIsBlurred(true);
       }
-    }
+    };
+
     document.addEventListener("mousedown",handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   })

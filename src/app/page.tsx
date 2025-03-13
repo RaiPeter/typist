@@ -16,7 +16,7 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { IoIosGitBranch } from "react-icons/io";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "@/components/Modal";
 import { generateRandomWords } from "@/utils/generateRandomWords";
 
@@ -35,6 +35,9 @@ const Page = () => {
   const [includePunctuation, setIncludePunctuation] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
 
+  const modeBarRef = useRef<HTMLDivElement>(null);
+  const footerLinkRef = useRef<HTMLDivElement>(null);
+
   const handleModal = () => {
     setIsModalOpen((prev)=> !prev);
   }
@@ -42,6 +45,11 @@ const Page = () => {
   const closeModal = () => {
     setIsModalOpen((prev)=>!prev);
   };
+  
+  useEffect(()=>{
+    const theme= localStorage.getItem("theme");
+    if(theme) document.documentElement.setAttribute("data-theme",theme);
+  },[])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -82,7 +90,7 @@ const Page = () => {
     <div className="page">
       <Header />
       <main>
-        <div className="type-mode-bar">
+        <div className="type-mode-bar" ref={modeBarRef}>
           <div>
             <button onClick={() => setIncludePunctuation(!includePunctuation)}>
               <CiAt /> punctuation
@@ -132,7 +140,7 @@ const Page = () => {
             </button>
           </div>
         </div>
-        <Typing text={text} mode={mode} duration={duration}/>
+        <Typing text={text} mode={mode} duration={duration} modeBarRef={modeBarRef} footerLinkRef={footerLinkRef}/>
       </main>
       <footer>
         <div className="footer">
@@ -144,7 +152,7 @@ const Page = () => {
               <div>esc</div> or <div>ctrl</div> + <div>shift</div> + <div>p</div> - command line
             </div>
           </div>
-          <div className="links">
+          <div className="links" ref={footerLinkRef}>
             <div>
               <button><MdOutlineEmail /> contact</button>
               <button><FaDonate /> support</button>

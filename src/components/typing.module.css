@@ -15,7 +15,7 @@
   scrollbar-width: none;
   font-family: monospace;
   line-height: 1.5;
-  font-size: 1.2rem;
+  font-size: 3em;
   width: 100%;
   color: var(--text-color);
   height: 180px;
@@ -33,9 +33,8 @@
 
 .word {
   display: inline-block;
-  margin-right: 0.5rem;
+  margin-right: 1rem;
   position: relative;
-  font-size: 2em;
 }
 .timer {
   font-size: 2rem;
