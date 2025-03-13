@@ -19,6 +19,10 @@ main{
 .type-mode-bar > div {
   display: flex;
 }
+.type-mode-bar button.active {
+  color: var(--accent-color);
+  /* color: var(--active-text-color); */
+}
 
 .type-mode-bar #spacer {
   height: 1em;

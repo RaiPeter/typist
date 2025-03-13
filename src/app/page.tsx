@@ -96,28 +96,28 @@ const Page = () => {
       <main>
         <div className="type-mode-bar" ref={modeBarRef}>
           <div>
-            <button onClick={() => setIncludePunctuation(!includePunctuation)}>
+            <button className={ includePunctuation ? "active" : ""} onClick={() => setIncludePunctuation(!includePunctuation)}>
               <CiAt /> punctuation
             </button>
-            <button onClick={() => setIncludePunctuation(!includeNumbers)}>
+            <button className={ includeNumbers ? "active" : ""} onClick={() => setIncludeNumbers(!includeNumbers)}>
               <FaHashtag /> numbers
             </button>
           </div>
           <span id="spacer"></span>
           <div>
-            <button onClick={() => setMode("time")}>
+            <button className={mode === "time" ? "active" : ""} onClick={() => setMode("time")}>
               <IoMdTime /> time
             </button>
-            <button onClick={() => setMode("words")}>
+            <button className={mode === "words" ? "active" : ""} onClick={() => setMode("words")}>
               <TbLetterA /> words
             </button>
-            <button onClick={() => setMode("quote")}>
+            <button className={mode === "quote" ? "active" : ""} onClick={() => setMode("quote")}>
               <FaQuoteLeft /> quote
             </button>
-            <button onClick={() => setMode("zen")}>
+            <button className={mode === "zen" ? "active" : ""} onClick={() => setMode("zen")}>
               <IoTriangle /> zen
             </button>
-            <button onClick={() => setMode("custom")}>
+            <button className={mode === "custom" ? "active" : ""} onClick={() => setMode("custom")}>
               <FaWrench /> custom
             </button>
           </div>
