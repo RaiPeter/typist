@@ -122,20 +122,20 @@ const Page = () => {
             </button>
           </div>
           <span id="spacer"></span>
-          <div>
+            <div>
             {mode === "time" ? (
               <>
-              <button onClick={() => setDuration(15)}>15</button>
-              <button onClick={() => setDuration(30)}>30</button>
-              <button onClick={() => setDuration(60)}>60</button>
-              <button onClick={() => setDuration(120)}>120</button>
+              <button className={duration === 15 ? "active" : ""} onClick={() => setDuration(15)}>15</button>
+              <button className={duration === 30 ? "active" : ""} onClick={() => setDuration(30)}>30</button>
+              <button className={duration === 60 ? "active" : ""} onClick={() => setDuration(60)}>60</button>
+              <button className={duration === 120 ? "active" : ""} onClick={() => setDuration(120)}>120</button>
               </>
             ) : mode === "words" ? (
               <>
-              <button onClick={() => setWordCount(15)}>10</button>
-              <button onClick={() => setWordCount(25)}>25</button>
-              <button onClick={() => setWordCount(50)}>50</button>
-              <button onClick={() => setWordCount(100)}>100</button>
+              <button className={wordcount === 15 ? "active" : ""} onClick={() => setWordCount(15)}>10</button>
+              <button className={wordcount === 25 ? "active" : ""} onClick={() => setWordCount(25)}>25</button>
+              <button className={wordcount === 50 ? "active" : ""} onClick={() => setWordCount(50)}>50</button>
+              <button className={wordcount === 100 ? "active" : ""} onClick={() => setWordCount(100)}>100</button>
               </>
             ) : null
             }

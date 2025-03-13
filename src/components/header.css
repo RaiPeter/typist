@@ -8,7 +8,7 @@
     margin-right: 5px;
     border-radius: 8px;
 }
-.header nav div a:nth-child(1){
+.header nav > div:nth-child(1) > a:nth-child(1){
     font-size: 2em;
 }
 .header nav svg {
