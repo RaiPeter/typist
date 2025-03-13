@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import styles from "./typing.module.css";
 import { RiResetRightLine } from "react-icons/ri";
+import Results from "./Results";
 
 interface WordProps {
   word: string;
@@ -49,6 +50,7 @@ export default function Typing({
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [isBlurred, setIsBlurred] = useState<boolean>(false);
+  const [isTabPressed, setIsTabPressed] = useState<boolean>(false);
 
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -129,12 +131,30 @@ export default function Typing({
       e.preventDefault();
       if (isCompleted) return;
 
+      // Track Tab key press
+      if (e.key === "Tab") {
+        setIsTabPressed(true);
+        return; // Exit early to avoid processing other keys yet
+      }
+
+      // Reset test when Tab + Enter are pressed
+      if (e.key === "Enter" && isTabPressed) {
+        console.log("Tab + Enter detected, resetting test");
+        resetTest();
+        setIsTabPressed(false); // Reset Tab state after reset
+        return;
+      }
+
+      // Reset Tab state if Enter is pressed without Tab
+      if (e.key === "Enter" && !isTabPressed) {
+        setIsTabPressed(false);
+      }
+
       const currentWord: string = words[currentWordIndex];
 
       if (!startTime && e.key.length === 1) {
         setStartTime(Date.now());
       }
-
       if (e.key === " ") {
         if (currentLetterIndex > 0 && currentWordIndex < words.length - 1) {
           setCurrentWordIndex((prev) => prev + 1);
@@ -189,10 +209,21 @@ export default function Typing({
         setTypedText((prev) => prev + e.key);
         setCurrentLetterIndex((prev) => prev + 1);
       }
+    };  
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      // Reset Tab state when released
+      if (e.key === "Tab") {
+        setIsTabPressed(false);
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("keyup", handleKeyUp);
+    };
   }, [currentWordIndex, currentLetterIndex, startTime, words, isCompleted]);
 
   useEffect(() => {
@@ -290,6 +321,7 @@ export default function Typing({
     setIsCompleted(false);
     setIsTimerActive(false);
     wordRefs.current = Array(words.length).fill(null);
+    console.log("reset test");
   };
 
   const typedWords: string[] = typedText
@@ -334,23 +366,11 @@ export default function Typing({
           <div>No text to type. Please select a mode.</div>
         )
       ) : (
-        <div className={styles.results}>
-          <h2>Test Completed!</h2>
-          <p>WPM: {calculateWPM()}</p>
-          <p>Errors: {errors}</p>
-          <p>
-            Accuracy:{" "}
-            {typedText.length > 0
-              ? Math.round(
-                  ((typedText.length - errors) / typedText.length) * 100
-                )
-              : 0}
-            %
-          </p>
-          <button className={styles.resetButton} onClick={resetTest}>
-            <RiResetRightLine />
-          </button>
-        </div>
+        <Results 
+          wpm={calculateWPM()}
+          errors={errors}
+          typedText={typedText}
+          onReset={resetTest} />
       )}
     </div>
   );
