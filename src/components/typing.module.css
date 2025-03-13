@@ -2,18 +2,25 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* min-height: 100vh; */
+    flex-direction: column;
     padding: 20px;
     max-width: var(--max-width);
-    margin: auto;
-    height: 240px;
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 200px;
   }
   
   .text {
     font-family: monospace;
-    font-size: 1.2rem;
     line-height: 1.5;
+    font-size: 1.5rem;
+    width: 100%;
+    max-width: 800px;
     color: var(--text-color);
+    height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   
   .word {
@@ -22,12 +29,19 @@
     position: relative;
     font-size: 2em;
   }
-  
+  .timer {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    align-self: baseline;
+  }
   .letter {
+    display: inline-block;
     position: relative;
   }
   
   .correct {
+    display: inline-block;
     color: var(--correct-letter);
   }
   

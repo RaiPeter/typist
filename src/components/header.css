@@ -9,7 +9,7 @@
     border-radius: 8px;
 }
 .header nav div a:nth-child(1){
-    font-size: 1.3em;
+    font-size: 2em;
 }
 .header nav svg {
     /* font-size: 1em; */

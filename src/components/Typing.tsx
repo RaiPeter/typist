@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./typing.module.css";
 
 interface WordProps {
@@ -20,20 +20,76 @@ interface LetterProps {
   isCaretAfterWord: boolean; // Add this prop to control caret after word
 }
 
-export default function Typing() {
-  const originalText: string = "the quick brown fox jump asd asdf as dfasdfasd fasdf asd asd fasdf asd s over the lazy dog";
-  const words: string[] = originalText.split(" ");
+interface TypingProps {
+  text: string;
+  mode: "time" | "words" | "quote" | "zen" | "custom";
+  duration: number;
+}
+
+export default function Typing({ text, mode, duration }: TypingProps) {
+  const words: string[] = text.split(" ");
+  console.log("Typing Component - Received Text:", text);
+  console.log("Typing Component - Words Array:", words);
 
   const [typedText, setTypedText] = useState<string>("");
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(duration);
   const [errors, setErrors] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
+
+  // ref for container
+  const textContainerRef = useRef<HTMLDivElement>(null);
+  // ref for each word
+  const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  useEffect(() => {
+    resetTest();
+  }, [text, mode]);
+
+  // timer for time mode
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (mode === "time" && startTime && !isCompleted) {
+      setIsTimerActive(true);
+      timer = setInterval(() => {
+        const elapsed = Math.floor(Date.now() - startTime) / 1000;
+        const remaining = duration - Math.floor(elapsed);
+        setTimeLeft(remaining);
+
+        if (remaining <= 0) {
+          setIsCompleted(true);
+          setIsTimerActive(false);
+          clearInterval(timer);
+        }
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [startTime, mode, duration, isCompleted]);
+
+  // auto scroll
+  useEffect(() => {
+    console.log("Auto-scroll triggered for word index:", currentWordIndex);
+    console.log("Word ref:", wordRefs.current[currentWordIndex]);
+    console.log("Text container ref:", textContainerRef.current);
+    if (wordRefs.current[currentWordIndex] && textContainerRef.current) {
+      console.log("Scrolling to word:", words[currentWordIndex]);
+      wordRefs.current[currentWordIndex]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } else {
+      console.log("Cannot scroll: Word ref or container ref is missing");
+    }
+  }, [currentWordIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
+      if (isCompleted) return;
+
       const currentWord: string = words[currentWordIndex];
 
       if (!startTime && e.key.length === 1) {
@@ -47,7 +103,8 @@ export default function Typing() {
           setCurrentLetterIndex(0);
         } else if (
           currentWordIndex === words.length - 1 &&
-          currentLetterIndex > 0
+          currentLetterIndex > 0 &&
+          mode !== "time"
         ) {
           setIsCompleted(true);
         }
@@ -97,7 +154,7 @@ export default function Typing() {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [currentWordIndex, currentLetterIndex, startTime, words]);
+  }, [currentWordIndex, currentLetterIndex, startTime, words, isCompleted]);
 
   useEffect(() => {
     console.log({ typedText, currentWordIndex, currentLetterIndex });
@@ -139,29 +196,40 @@ export default function Typing() {
     currentLetterIndex,
     isCompleted,
   }: WordProps) => {
+    if (!word) return null;
     const typedWord: string = typedWords[wordIndex] || "";
     const isCaretAfterWord: boolean =
       wordIndex === currentWordIndex &&
       currentLetterIndex === word.length &&
       !isCompleted;
 
-    return word.split("").map((letter, index) => {
-      const isCurrent: boolean =
-        wordIndex === currentWordIndex &&
-        index === currentLetterIndex &&
-        !isCompleted &&
-        currentLetterIndex < word.length;
-      const isLastLetter: boolean = index === word.length - 1;
+    return (
+      <span
+        ref={(el) => {
+          wordRefs.current[wordIndex] = el;
+        }}
+        className={styles.word}
+        key={wordIndex}
+      >
+        {word.split("").map((letter, index) => {
+          const isCurrent: boolean =
+            wordIndex === currentWordIndex &&
+            index === currentLetterIndex &&
+            !isCompleted &&
+            currentLetterIndex < word.length;
+          const isLastLetter: boolean = index === word.length - 1;
 
-      return renderLetter({
-        letter,
-        index,
-        typedWord,
-        isCurrent,
-        isLastLetter,
-        isCaretAfterWord,
-      });
-    });
+          return renderLetter({
+            letter,
+            index,
+            typedWord,
+            isCurrent,
+            isLastLetter,
+            isCaretAfterWord,
+          });
+        })}
+      </span>
+    );
   };
 
   const calculateWPM = (): number => {
@@ -178,8 +246,11 @@ export default function Typing() {
     setCurrentWordIndex(0);
     setCurrentLetterIndex(0);
     setStartTime(null);
+    setTimeLeft(duration);
     setErrors(0);
     setIsCompleted(false);
+    setIsTimerActive(false);
+    wordRefs.current = [];
   };
 
   const typedWords: string[] = typedText
@@ -188,21 +259,26 @@ export default function Typing() {
 
   return (
     <div className={styles.container}>
+      {mode === "time" && !isCompleted && isTimerActive && (
+        <div className={styles.timer}>{timeLeft}</div>
+      )}
       {!isCompleted ? (
-        <div className={styles.text}>
-          {words.map((word, i) => (
-            <span key={`${word}-${i}`} className={styles.word}>
-              {renderWord({
+        words.length > 0 ? (
+          <div className={styles.text} ref={textContainerRef}>
+            {words.map((word, i) =>
+              renderWord({
                 word,
                 wordIndex: i,
                 typedWords,
                 currentWordIndex,
                 currentLetterIndex,
                 isCompleted,
-              })}
-            </span>
-          ))}
-        </div>
+              })
+            )}
+          </div>
+        ) : (
+          <div>No text to type. Please select a mode.</div>
+        )
       ) : (
         <div className={styles.results}>
           <h2>Test Completed!</h2>

@@ -18,9 +18,22 @@ import { IoIosGitBranch } from "react-icons/io";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
+import { generateRandomWords } from "@/utils/generateRandomWords";
+
+const quotes = [
+  "To be or not to be that is the question.",
+  "Life is what happens when you're busy making other plans.",
+  "The only way to do great work is to love what you do.",
+];
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mode, setMode] = useState<"time" | "words" | "quote" | "zen" | "custom">("time");
+  const [duration, setDuration] = useState<number>(15);
+  const [wordcount, setWordCount] = useState<number>(25);
+  const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
+  const [includePunctuation, setIncludePunctuation] = useState<boolean>(false);
+  const [text, setText] = useState<string>("");
 
   const handleModal = () => {
     setIsModalOpen((prev)=> !prev);
@@ -49,49 +62,77 @@ const Page = () => {
     };
   }, [isModalOpen]);
 
+  useEffect(()=>{
+    let generatedText: string = "";
+    if(mode === "time" || mode === "words"){
+      const count = mode === "time" ? 100 : wordcount;
+      generatedText = generateRandomWords(count, includeNumbers, includePunctuation);
+    }else if(mode === "quote"){
+      generatedText = quotes[Math.floor(Math.random() * quotes.length)]
+    }else if(mode === "zen"){
+      generatedText = "";
+    }else if(mode === "custom"){
+      generatedText = "type your custom text here";
+    }
+    console.log("Generated Text:", generatedText);
+    setText(generatedText);
+  },[mode,wordcount,includeNumbers,includePunctuation]);
+
   return (
     <div className="page">
       <Header />
       <main>
         <div className="type-mode-bar">
           <div>
-            <button>
+            <button onClick={() => setIncludePunctuation(!includePunctuation)}>
               <CiAt /> punctuation
             </button>
-            <button>
+            <button onClick={() => setIncludePunctuation(!includeNumbers)}>
               <FaHashtag /> numbers
             </button>
           </div>
           <span id="spacer"></span>
           <div>
-            <button>
+            <button onClick={() => setMode("time")}>
               <IoMdTime /> time
             </button>
-            <button>
+            <button onClick={() => setMode("words")}>
               <TbLetterA /> words
             </button>
-            <button>
+            <button onClick={() => setMode("quote")}>
               <FaQuoteLeft /> quote
             </button>
-            <button>
+            <button onClick={() => setMode("zen")}>
               <IoTriangle /> zen
             </button>
-            <button>
+            <button onClick={() => setMode("custom")}>
               <FaWrench /> custom
             </button>
           </div>
           <span id="spacer"></span>
           <div>
-            <button>15</button>
-            <button>30</button>
-            <button>60</button>
-            <button>120</button>
+            {mode === "time" ? (
+              <>
+              <button onClick={() => setDuration(15)}>15</button>
+              <button onClick={() => setDuration(30)}>30</button>
+              <button onClick={() => setDuration(60)}>60</button>
+              <button onClick={() => setDuration(120)}>120</button>
+              </>
+            ) : mode === "words" ? (
+              <>
+              <button onClick={() => setWordCount(15)}>10</button>
+              <button onClick={() => setWordCount(25)}>25</button>
+              <button onClick={() => setWordCount(50)}>50</button>
+              <button onClick={() => setWordCount(100)}>100</button>
+              </>
+            ) : null
+            }
             <button>
               <BsTools />
             </button>
           </div>
         </div>
-        <Typing />
+        <Typing text={text} mode={mode} duration={duration}/>
       </main>
       <footer>
         <div className="footer">
