@@ -1,100 +1,108 @@
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
-    max-width: var(--max-width);
-    margin-top: 80px;
-    margin-left: auto;
-    margin-right: auto;
-    min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  max-width: var(--max-width);
+  margin-top: 60px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 200px;
+}
+
+.text {
+  scrollbar-width: none;
+  font-family: monospace;
+  line-height: 1.5;
+  font-size: 1.2rem;
+  width: 100%;
+  color: var(--text-color);
+  height: 180px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  user-select: none;
+  transition: filter 1.5s ease;
+}
+.text::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+.text.blurred {
+  filter: blur(4px);
+}
+
+.word {
+  display: inline-block;
+  margin-right: 0.5rem;
+  position: relative;
+  font-size: 2em;
+}
+.timer {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+  align-self: baseline;
+}
+.letter {
+  display: inline-block;
+  position: relative;
+}
+
+.correct {
+  display: inline-block;
+  color: var(--correct-letter);
+}
+
+.incorrect {
+  color: var(--incorrect-letter);
+  background-color: var(--accent-color);
+}
+
+.caret {
+  position: absolute;
+  left: -0.2em;
+  z-index: 100;
+  color: var(--caret-color);
+  animation: blink 1s step-end infinite;
+}
+
+.caretAfter {
+  position: absolute;
+  left: 0.2em; /* Position immediately after the letter */
+  z-index: 1000000;
+  color: var(--caret-color);
+  animation: blink 1s step-end infinite;
+}
+
+.results {
+  text-align: center;
+}
+
+.results h2 {
+  margin-bottom: 1rem;
+}
+
+.results p {
+  margin: 0.5rem 0;
+}
+
+.results button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.results button:hover {
+  background-color: #0056b3;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
-  
-  .text {
-    font-family: monospace;
-    line-height: 1.5;
-    font-size: 1.5rem;
-    width: 100%;
-    max-width: 800px;
-    color: var(--text-color);
-    height: 180px;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  
-  .word {
-    display: inline-block;
-    margin-right: 0.5rem;
-    position: relative;
-    font-size: 2em;
-  }
-  .timer {
-    font-size: 2rem;
-    color: var(--accent-color);
-    margin-bottom: 10px;
-    align-self: baseline;
-  }
-  .letter {
-    display: inline-block;
-    position: relative;
-  }
-  
-  .correct {
-    display: inline-block;
-    color: var(--correct-letter);
-  }
-  
-  .incorrect {
-    color: var(--incorrect-letter);
-    background-color: var(--accent-color);
-  }
-  
-  .caret {
-    position: absolute;
-    left: -5px;
-    z-index: 100;
-    color: var(--caret-color);
-    animation: blink 1s step-end infinite;
-  }
-  
-  .caretAfter {
-    position: absolute;
-    left: 10px; /* Position immediately after the letter */
-    z-index: 1000000;
-    color: var(--caret-color);
-    animation: blink 1s step-end infinite;
-  }
-  
-  .results {
-    text-align: center;
-  }
-  
-  .results h2 {
-    margin-bottom: 1rem;
-  }
-  
-  .results p {
-    margin: 0.5rem 0;
-  }
-  
-  .results button {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .results button:hover {
-    background-color: #0056b3;
-  }
-  
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
+}

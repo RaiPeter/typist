@@ -39,7 +39,8 @@ export default function Typing({ text, mode, duration }: TypingProps) {
   const [errors, setErrors] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
-
+  const [isBlurred, setIsBlurred] = useState<boolean>(false);
+  
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
   // ref for each word
@@ -84,6 +85,19 @@ export default function Typing({ text, mode, duration }: TypingProps) {
       console.log("Cannot scroll: Word ref or container ref is missing");
     }
   }, [currentWordIndex]);
+
+  useEffect(()=>{
+    const handleClickOutside = (event : MouseEvent) => {
+      if(textContainerRef.current && !textContainerRef.current.contains(event.target as Node)){
+        setIsBlurred(true);
+      }else{
+        console.log("Clicked inside, removing blurr");
+        setIsBlurred(false);
+      }
+    }
+    document.addEventListener("mousedown",handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  })
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -259,12 +273,12 @@ export default function Typing({ text, mode, duration }: TypingProps) {
 
   return (
     <div className={styles.container}>
-      {mode === "time" && !isCompleted && isTimerActive && (
-        <div className={styles.timer}>{timeLeft}</div>
+      {mode === "time" && (
+        <div className={styles.timer} style={{visibility : !isCompleted && isTimerActive ? "visible" : "hidden" }}>{timeLeft}</div>
       )}
       {!isCompleted ? (
         words.length > 0 ? (
-          <div className={styles.text} ref={textContainerRef}>
+          <div className={`${styles.text} ${isBlurred ? styles.blurred : ""}`} ref={textContainerRef} >
             {words.map((word, i) =>
               renderWord({
                 word,
