@@ -99,6 +99,25 @@
 .results button:hover {
   background-color: #0056b3;
 }
+.resetButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  outline: none;
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  color: var(--accent-color);
+  background-color: unset;
+  border: none;
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.resetButton:hover {
+  color: var(--text-color);
+}
 
 @keyframes blink {
   50% {

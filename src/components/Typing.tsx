@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import styles from "./typing.module.css";
+import { RiResetRightLine } from "react-icons/ri";
 
 interface WordProps {
   word: string;
@@ -28,7 +29,13 @@ interface TypingProps {
   footerLinkRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }: TypingProps) {
+export default function Typing({
+  text,
+  mode,
+  duration,
+  modeBarRef,
+  footerLinkRef,
+}: TypingProps) {
   const words: string[] = text.split(" ");
   console.log("Typing Component - Received Text:", text);
   console.log("Typing Component - Words Array:", words);
@@ -73,7 +80,7 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
   }, [startTime, mode, duration, isCompleted]);
 
   // auto scroll
-  useEffect(() => {
+  useLayoutEffect(() => {
     console.log("Auto-scroll triggered for word index:", currentWordIndex);
     console.log("Word ref:", wordRefs.current[currentWordIndex]);
     console.log("Text container ref:", textContainerRef.current);
@@ -88,16 +95,19 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
     }
   }, [currentWordIndex]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
 
       // Check if the click is inside the text container
-      const isClickInsideText = textContainerRef.current && textContainerRef.current.contains(target);
+      const isClickInsideText =
+        textContainerRef.current && textContainerRef.current.contains(target);
 
       // Check if the click is inside the mode bar
-      const isClickInsideModeBar = modeBarRef.current && modeBarRef.current.contains(target);
-      const isClickInsideFooterLink = footerLinkRef.current && footerLinkRef.current.contains(target);
+      const isClickInsideModeBar =
+        modeBarRef.current && modeBarRef.current.contains(target);
+      const isClickInsideFooterLink =
+        footerLinkRef.current && footerLinkRef.current.contains(target);
 
       if (isClickInsideText) {
         console.log("Click inside text container, removing blur");
@@ -110,9 +120,9 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
       }
     };
 
-    document.addEventListener("mousedown",handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  })
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -279,7 +289,7 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
     setErrors(0);
     setIsCompleted(false);
     setIsTimerActive(false);
-    wordRefs.current = [];
+    wordRefs.current = Array(words.length).fill(null);
   };
 
   const typedWords: string[] = typedText
@@ -289,22 +299,37 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
   return (
     <div className={styles.container}>
       {mode === "time" && (
-        <div className={styles.timer} style={{visibility : !isCompleted && isTimerActive ? "visible" : "hidden" }}>{timeLeft}</div>
+        <div
+          className={styles.timer}
+          style={{
+            visibility: !isCompleted && isTimerActive ? "visible" : "hidden",
+          }}
+        >
+          {timeLeft}
+        </div>
       )}
       {!isCompleted ? (
         words.length > 0 ? (
-          <div className={`${styles.text} ${isBlurred ? styles.blurred : ""}`} ref={textContainerRef} >
-            {words.map((word, i) =>
-              renderWord({
-                word,
-                wordIndex: i,
-                typedWords,
-                currentWordIndex,
-                currentLetterIndex,
-                isCompleted,
-              })
-            )}
-          </div>
+          <>
+            <div
+              className={`${styles.text} ${isBlurred ? styles.blurred : ""}`}
+              ref={textContainerRef}
+            >
+              {words.map((word, i) =>
+                renderWord({
+                  word,
+                  wordIndex: i,
+                  typedWords,
+                  currentWordIndex,
+                  currentLetterIndex,
+                  isCompleted,
+                })
+              )}
+            </div>
+            <button className={styles.resetButton} onClick={resetTest}>
+              <RiResetRightLine />
+            </button>
+          </>
         ) : (
           <div>No text to type. Please select a mode.</div>
         )
@@ -322,7 +347,9 @@ export default function Typing({ text, mode, duration,modeBarRef,footerLinkRef }
               : 0}
             %
           </p>
-          <button onClick={resetTest}>Restart</button>
+          <button className={styles.resetButton} onClick={resetTest}>
+            <RiResetRightLine />
+          </button>
         </div>
       )}
     </div>

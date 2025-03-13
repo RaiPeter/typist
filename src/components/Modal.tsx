@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./Modal.css";
 
-const Modal = () => {
+interface Prop {
+  setCurrentTheme: (theme: string) => void;
+}
+const Modal = ({setCurrentTheme} : Prop) => {
+
     const [theme, setTheme] = useState("");
     const handleTheme = (e: React.MouseEvent<HTMLLabelElement>) => {
         const label = (e.target as HTMLLabelElement).innerText;
@@ -12,6 +16,7 @@ const Modal = () => {
             label
         );
         localStorage.setItem("theme", label);
+        setCurrentTheme(label)
     }
     
   return (

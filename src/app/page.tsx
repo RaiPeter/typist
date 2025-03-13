@@ -34,6 +34,7 @@ const Page = () => {
   const [includeNumbers, setIncludeNumbers] = useState<boolean>(false);
   const [includePunctuation, setIncludePunctuation] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
+  const [currentTheme, setCurrentTheme] = useState<string>("");
 
   const modeBarRef = useRef<HTMLDivElement>(null);
   const footerLinkRef = useRef<HTMLDivElement>(null);
@@ -48,8 +49,11 @@ const Page = () => {
   
   useEffect(()=>{
     const theme= localStorage.getItem("theme");
-    if(theme) document.documentElement.setAttribute("data-theme",theme);
-  },[])
+    if(theme) {
+      document.documentElement.setAttribute("data-theme",theme);
+      setCurrentTheme(theme);
+    }
+  },[currentTheme])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -164,13 +168,13 @@ const Page = () => {
               <Link href={""}><FaLock /> privacy</Link>
             </div>
             <div>
-              <button onClick={() => handleModal()}><FaPalette /> rose pine</button>
+              <button onClick={() => handleModal()}><FaPalette /> {currentTheme}</button>
               <button><IoIosGitBranch /> v2.23.4</button>
             </div>
           </div>
         </div>
       </footer>
-    {isModalOpen && <Modal />}
+    {isModalOpen && <Modal setCurrentTheme={setCurrentTheme}/>}
     </div>
   );
 };
