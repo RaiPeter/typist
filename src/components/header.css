@@ -32,3 +32,30 @@
 .header nav a:hover{
     color: var(--hover-text-color);
 }
+
+@media screen and (max-width: 1023px){
+    .header{
+        font-size: 1em;
+        padding: 30px 15px;
+    }   
+    .header nav {
+        width: 100%;
+    }
+    .header nav > div:nth-child(2){
+        display: flex;
+        align-self: flex-end;
+        padding: 5px;
+    }
+    .header nav svg{
+        width: 30px;
+    }
+}
+@media screen and (max-width: 767px){
+    .header{
+        font-size: 0.7em;
+        padding: 30px 10px;
+    }   
+    .header nav svg{
+        width: 25px;
+    }
+}

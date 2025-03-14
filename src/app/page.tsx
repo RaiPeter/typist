@@ -16,7 +16,7 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { IoIosGitBranch } from "react-icons/io";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Modal from "@/components/Modal";
 import { generateRandomWords } from "@/utils/generateRandomWords";
 
@@ -56,7 +56,7 @@ const Page = () => {
       document.documentElement.setAttribute("data-theme","light");
       setCurrentTheme("light");
     }
-  },[currentTheme])
+  },[])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -92,6 +92,17 @@ const Page = () => {
     console.log("Generated Text:", generatedText);
     setText(generatedText);
   },[mode,wordcount,includeNumbers,includePunctuation]);
+
+  const typingProps = useMemo(
+    () => ({
+      text,
+      mode,
+      duration,
+      modeBarRef,
+      footerLinkRef,
+    }),
+    [text, mode, duration]
+  );
 
   return (
     <div className="page">
@@ -147,7 +158,7 @@ const Page = () => {
             </button>
           </div>
         </div>
-        <Typing text={text} mode={mode} duration={duration} modeBarRef={modeBarRef} footerLinkRef={footerLinkRef}/>
+        <Typing {...typingProps}/>
       </main>
       <footer>
         <div className="footer">

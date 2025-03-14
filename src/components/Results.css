@@ -41,7 +41,8 @@
 }
 
 .results button:hover {
-  background-color: #0056b3;
+  background-color: var(--mode-row-bg-color);
+  color: var(--accent-color);
 }
 .resetButton {
   display: flex;
@@ -61,4 +62,13 @@
 
 .resetButton:hover {
   color: var(--text-color);
+}
+@media screen and (max-width: 767px) {
+  
+.results > div:nth-child(2) div {
+  margin-right: 20px;
+}
+.results > div:nth-child(2) p {
+  font-size: 4em;
+}
 }

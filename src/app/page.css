@@ -1,9 +1,9 @@
-main{
+main {
   height: 70vh;
 }
-.page{
-    height: 100vh;
-    background-color: var(--background-color);
+.page {
+  /* height: 100vh; */
+  background-color: var(--background-color);
 }
 .type-mode-bar {
   max-width: fit-content;
@@ -14,7 +14,7 @@ main{
   justify-content: space-evenly;
   align-items: center;
   padding: 0 20px;
-  box-shadow: 0px 0px 1px 0px var(--hover-text-color);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 .type-mode-bar > div {
   display: flex;
@@ -49,51 +49,96 @@ main{
   transition: color 0.2s ease-in;
 }
 
-.footer{
-    max-width: var(--max-width);
-    margin: auto;
+.footer {
+  max-width: var(--max-width);
+  margin: auto;
 }
-.footer > div .row{
+.footer > div .row {
   display: flex;
   justify-content: center;
   color: var(--text-color);
 }
 
-.footer > div .row div{
+.footer > div .row div {
   /* background-color: forestgreen; */
   background-color: var(--hover-text-color);
   color: var(--background-color);
-    padding: 2px 6px;
-    margin-bottom: 20px;
+  padding: 2px 6px;
+  margin-bottom: 20px;
+  border-radius: 2px;
 }
-.footer .links{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.footer .links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.footer .links button{
-    outline: none;
-    border: none;
-    background: none;
-    color: var(--text-color);
-    font-size: 1em;
+.footer .links button {
+  outline: none;
+  border: none;
+  background: none;
+  color: var(--text-color);
+  font-size: 1em;
 }
 
 .footer .links a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 1em;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 1em;
 }
 
 .footer .links a,
-.footer .links button{
-    padding: 0 5px;
-    transition: color 0.2s ease-in;
-    cursor: pointer;
+.footer .links button {
+  padding: 0 5px;
+  transition: color 0.2s ease-in;
+  cursor: pointer;
 }
 
 .footer .links a:hover,
-.footer .links button:hover{
-    color: var(--hover-text-color);
+.footer .links button:hover {
+  color: var(--hover-text-color);
+}
+@media screen and (max-width: 1023px) {
+  .type-mode-bar {
+    flex-wrap: wrap;
+    width: 90%;
+    padding: unset;
+    justify-content: center;
+  }
+  .type-mode-bar > div {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .footer{
+    font-size: 1em;
+    max-width: 100%;
+  }
+  .footer .links{
+    padding: 0 10px;
+  }
+  .footer .links > div:nth-child(1){
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .footer .links > div:nth-child(2){
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 767px) {
+  .type-mode-bar #spacer {
+    display: none;
+  }
+  .footer{
+    font-size: 0.6em;
+  }
+  .footer .links{
+    padding: 0 10px;
+  }
+  .footer .links > div:nth-child(1){
+    width: 60%;
+  }
+  .footer .links > div:nth-child(2){
+    width: 20%;
+  }
 }

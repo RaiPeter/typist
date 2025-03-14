@@ -96,3 +96,19 @@
     opacity: 0;
   }
 }
+@media screen and (max-width: 1023px) {
+  .container {
+    margin-top: 40px;
+    font-size: 1em;
+    max-width: 850px;
+  }  
+}
+@media screen and (max-width: 767px) {
+  .container{
+    margin-top: unset;
+    font-size: 0.9em;
+  }
+  .text {
+    max-height: 150px;
+  }
+}
