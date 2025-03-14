@@ -52,6 +52,9 @@ const Page = () => {
     if(theme) {
       document.documentElement.setAttribute("data-theme",theme);
       setCurrentTheme(theme);
+    }else{
+      document.documentElement.setAttribute("data-theme","light");
+      setCurrentTheme("light");
     }
   },[currentTheme])
 

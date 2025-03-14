@@ -20,7 +20,7 @@ main{
   display: flex;
 }
 .type-mode-bar button.active {
-  color: var(--accent-color);
+  color: var(--hover-text-color);
   /* color: var(--active-text-color); */
 }
 

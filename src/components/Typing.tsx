@@ -1,5 +1,11 @@
 "use client";
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import styles from "./typing.module.css";
 import { RiResetRightLine } from "react-icons/ri";
 import Results from "./Results";
@@ -31,6 +37,48 @@ interface TypingProps {
   footerLinkRef: React.RefObject<HTMLDivElement>;
 }
 
+const TextContainer: React.FC<{
+  words: string[];
+  typedWords: string[];
+  currentWordIndex: number;
+  currentLetterIndex: number;
+  isCompleted: boolean;
+  isBlurred: boolean;
+  textContainerRef: React.RefObject<HTMLDivElement>;
+  wordRefs: React.MutableRefObject<(HTMLSpanElement | null)[]>;
+  renderWord: (props: WordProps) => JSX.Element | null;
+}> = React.memo(
+  ({
+    words,
+    typedWords,
+    currentWordIndex,
+    currentLetterIndex,
+    isCompleted,
+    isBlurred,
+    textContainerRef,
+    wordRefs,
+    renderWord,
+  }) => {
+    return (
+      <div
+        className={`${styles.text} ${isBlurred ? styles.blurred : ""}`}
+        ref={textContainerRef}
+      >
+        {words.map((word, i) =>
+          renderWord({
+            word,
+            wordIndex: i,
+            typedWords,
+            currentWordIndex,
+            currentLetterIndex,
+            isCompleted,
+          })
+        )}
+      </div>
+    );
+  }
+);
+
 export default function Typing({
   text,
   mode,
@@ -50,6 +98,7 @@ export default function Typing({
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [isBlurred, setIsBlurred] = useState<boolean>(false);
   const [isTabPressed, setIsTabPressed] = useState<boolean>(false);
+  const [finalWPM, setFinalWPM] = useState<number>(0);
 
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -57,11 +106,15 @@ export default function Typing({
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
+    wordRefs.current = Array(words.length).fill(null);
     resetTest();
   }, [text, mode]);
 
-  // auto scroll
-  useLayoutEffect(() => {
+  useEffect(() => {
+    resetTest();
+  }, [text, mode]);
+
+  const handleAutoScroll = useCallback(() => {
     console.log("Auto-scroll triggered for word index:", currentWordIndex);
     console.log("Word ref:", wordRefs.current[currentWordIndex]);
     console.log("Text container ref:", textContainerRef.current);
@@ -74,10 +127,15 @@ export default function Typing({
     } else {
       console.log("Cannot scroll: Word ref or container ref is missing");
     }
-  }, [currentWordIndex]);
+  }, [currentWordIndex, words]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+  // auto scroll
+  useLayoutEffect(() => {
+    handleAutoScroll();
+  }, [handleAutoScroll]);
+
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
       const target = event.target as Node;
 
       // Check if the click is inside the text container
@@ -99,14 +157,17 @@ export default function Typing({
         console.log("Click outside, applying blur");
         setIsBlurred(true);
       }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  });
+    },
+    [modeBarRef, footerLinkRef]
+  );
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [handleClickOutside]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
       e.preventDefault();
       if (isCompleted) return;
 
@@ -188,22 +249,33 @@ export default function Typing({
         setTypedText((prev) => prev + e.key);
         setCurrentLetterIndex((prev) => prev + 1);
       }
-    };  
+    },
+    [
+      isCompleted,
+      currentWordIndex,
+      currentLetterIndex,
+      startTime,
+      words,
+      mode,
+      isTabPressed,
+    ]
+  );
 
-    const handleKeyUp = (e: KeyboardEvent) => {
-      // Reset Tab state when released
-      if (e.key === "Tab") {
-        setIsTabPressed(false);
-      }
-    };
+  const handleKeyUp = useCallback((e: KeyboardEvent) => {
+    // Reset Tab state when released
+    if (e.key === "Tab") {
+      setIsTabPressed(false);
+    }
+  }, []);
 
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [currentWordIndex, currentLetterIndex, startTime, words, isCompleted]);
+  }, [handleKeyDown, handleKeyUp]);
 
   useEffect(() => {
     console.log({ typedText, currentWordIndex, currentLetterIndex });
@@ -290,6 +362,13 @@ export default function Typing({
     return Math.round(correctWords / timeElapsed);
   };
 
+  useEffect(() => {
+    if (isCompleted && startTime) {
+      const wpm = calculateWPM();
+      setFinalWPM(wpm);
+    }
+  }, [isCompleted, startTime]);
+
   const resetTest = (): void => {
     setTypedText("");
     setCurrentWordIndex(0);
@@ -298,6 +377,7 @@ export default function Typing({
     setErrors(0);
     setIsCompleted(false);
     wordRefs.current = Array(words.length).fill(null);
+    setFinalWPM(0);
     console.log("reset test");
   };
 
@@ -317,21 +397,17 @@ export default function Typing({
       {!isCompleted ? (
         words.length > 0 ? (
           <>
-            <div
-              className={`${styles.text} ${isBlurred ? styles.blurred : ""}`}
-              ref={textContainerRef}
-            >
-              {words.map((word, i) =>
-                renderWord({
-                  word,
-                  wordIndex: i,
-                  typedWords,
-                  currentWordIndex,
-                  currentLetterIndex,
-                  isCompleted,
-                })
-              )}
-            </div>
+            <TextContainer
+              words={words}
+              typedWords={typedWords}
+              currentWordIndex={currentWordIndex}
+              currentLetterIndex={currentLetterIndex}
+              isCompleted={isCompleted}
+              isBlurred={isBlurred}
+              textContainerRef={textContainerRef}
+              wordRefs={wordRefs}
+              renderWord={renderWord}
+            />
             <button className={styles.resetButton} onClick={resetTest}>
               <RiResetRightLine />
             </button>
@@ -340,11 +416,12 @@ export default function Typing({
           <div>No text to type. Please select a mode.</div>
         )
       ) : (
-        <Results 
-          wpm={calculateWPM()}
+        <Results
+          wpm={finalWPM}
           errors={errors}
           typedText={typedText}
-          onReset={resetTest} />
+          onReset={resetTest}
+        />
       )}
     </div>
   );
