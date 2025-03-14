@@ -35,6 +35,7 @@ const Page = () => {
   const [includePunctuation, setIncludePunctuation] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const [currentTheme, setCurrentTheme] = useState<string>("");
+  const [isTestActive, setIsTestActive] = useState<boolean>(false);
 
   const modeBarRef = useRef<HTMLDivElement>(null);
   const footerLinkRef = useRef<HTMLDivElement>(null);
@@ -100,15 +101,16 @@ const Page = () => {
       duration,
       modeBarRef,
       footerLinkRef,
+      onTestActiveChange: setIsTestActive,
     }),
     [text, mode, duration]
   );
 
   return (
     <div className="page">
-      <Header />
+      <Header isTestActive={isTestActive}/>
       <main>
-        <div className="type-mode-bar" ref={modeBarRef}>
+        <div className={`type-mode-bar ${isTestActive ? "hidden" : "visible"}`} ref={modeBarRef}>
           <div>
             <button className={ includePunctuation ? "active" : ""} onClick={() => setIncludePunctuation(!includePunctuation)}>
               <CiAt /> punctuation
@@ -161,7 +163,7 @@ const Page = () => {
         <Typing {...typingProps}/>
       </main>
       <footer>
-        <div className="footer">
+        <div className={`footer ${isTestActive ? "hidden" : "visible"}`}>
           <div>
             <div className="row">
               <div>tab</div> + <div>enter</div> - restart test

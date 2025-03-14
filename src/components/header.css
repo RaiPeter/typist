@@ -28,7 +28,16 @@
     text-decoration: none;
     color: var(--text-color);
 }
-
+.header nav a.visible{
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0.2s ease-in, opacity 0.2s ease-in;
+}
+.header nav a.hidden{
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0.2s ease-in, opacity 0.2s ease-in;
+}
 .header nav a:hover{
     color: var(--hover-text-color);
 }

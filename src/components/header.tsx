@@ -3,7 +3,11 @@ import { FaRegKeyboard, FaCrown, FaRegBell, FaRegUser } from "react-icons/fa";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { FaGear } from "react-icons/fa6";
 
-const Header = () => {
+interface HeaderProps {
+  isTestActive: boolean;
+}
+
+const Header = ({ isTestActive }: HeaderProps) => {
   return (
     <div className="header">
       <nav>
@@ -28,24 +32,24 @@ const Header = () => {
             </svg>
             snaketype
           </a>
-          <a>
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <FaRegKeyboard />
           </a>
-          <a>
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <FaCrown />
           </a>
-          <a>
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <IoMdInformationCircleOutline />
           </a>
-          <a>
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <FaGear />
           </a>
         </div>
         <div>
-          <a>
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <FaRegBell />
           </a>
-          <a href="">
+          <a className={`${isTestActive ? "hidden" : "visible"}`}>
             <FaRegUser />
           </a>
         </div>

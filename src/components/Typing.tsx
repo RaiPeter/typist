@@ -35,6 +35,7 @@ interface TypingProps {
   duration: number;
   modeBarRef: React.RefObject<HTMLDivElement>;
   footerLinkRef: React.RefObject<HTMLDivElement>;
+  onTestActiveChange?: (isActive: boolean) => void;
 }
 
 const TextContainer: React.FC<{
@@ -85,6 +86,7 @@ export default function Typing({
   duration,
   modeBarRef,
   footerLinkRef,
+  onTestActiveChange,
 }: TypingProps) {
   const words: string[] = text.split(" ");
   console.log("Typing Component - Received Text:", text);
@@ -104,6 +106,14 @@ export default function Typing({
   const textContainerRef = useRef<HTMLDivElement>(null);
   // ref for each word
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  // Determine if the test is active
+  const isTestActive = !!startTime && !isCompleted;
+
+  // Notify parent when test active state changes
+  useEffect(() => {
+    onTestActiveChange?.(isTestActive);
+  }, [isTestActive, onTestActiveChange]);
 
   useEffect(() => {
     wordRefs.current = Array(words.length).fill(null);
