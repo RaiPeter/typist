@@ -37,7 +37,7 @@ const Results = ({ wpm, errors, typedText, onReset }: ResultProps) => {
         </div>
       </div>
       <div>
-      <button className="resetButton" onClick={onReset}>
+      <button className="resetButton" autoFocus onClick={onReset}>
         <RiResetRightLine />
       </button>
       </div>

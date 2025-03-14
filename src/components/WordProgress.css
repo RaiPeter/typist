@@ -1,0 +1,9 @@
+.wordProgress {
+    font-size: 2rem;
+    display: block;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    align-self: baseline;
+    text-align: left;
+    visibility: hidden;
+  }

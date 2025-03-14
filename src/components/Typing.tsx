@@ -10,6 +10,7 @@ import styles from "./typing.module.css";
 import { RiResetRightLine } from "react-icons/ri";
 import Results from "./Results";
 import Timer from "./Timer";
+import WordProgress from "./WordProgress";
 
 interface WordProps {
   word: string;
@@ -26,7 +27,7 @@ interface LetterProps {
   typedWord: string;
   isCurrent: boolean;
   isLastLetter: boolean;
-  isCaretAfterWord: boolean; // Add this prop to control caret after word
+  isCaretAfterWord: boolean;
 }
 
 interface TypingProps {
@@ -89,6 +90,7 @@ export default function Typing({
   onTestActiveChange,
 }: TypingProps) {
   const words: string[] = text.split(" ");
+  const totalWords: number = words.length;
   console.log("Typing Component - Received Text:", text);
   console.log("Typing Component - Words Array:", words);
 
@@ -101,6 +103,7 @@ export default function Typing({
   const [isBlurred, setIsBlurred] = useState<boolean>(false);
   const [isTabPressed, setIsTabPressed] = useState<boolean>(false);
   const [finalWPM, setFinalWPM] = useState<number>(0);
+  const [completedWords, setCompletedWords] = useState<number>(0);
 
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -120,22 +123,12 @@ export default function Typing({
     resetTest();
   }, [text, mode]);
 
-  useEffect(() => {
-    resetTest();
-  }, [text, mode]);
-
   const handleAutoScroll = useCallback(() => {
-    console.log("Auto-scroll triggered for word index:", currentWordIndex);
-    console.log("Word ref:", wordRefs.current[currentWordIndex]);
-    console.log("Text container ref:", textContainerRef.current);
     if (wordRefs.current[currentWordIndex] && textContainerRef.current) {
-      console.log("Scrolling to word:", words[currentWordIndex]);
       wordRefs.current[currentWordIndex]?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
-    } else {
-      console.log("Cannot scroll: Word ref or container ref is missing");
     }
   }, [currentWordIndex, words]);
 
@@ -162,9 +155,8 @@ export default function Typing({
         console.log("Click inside text container, removing blur");
         setIsBlurred(false);
       } else if (isClickInsideModeBar || isClickInsideFooterLink) {
-        console.log("Click inside mode bar, not applying blur");
+        // nothing
       } else {
-        console.log("Click outside, applying blur");
         setIsBlurred(true);
       }
     },
@@ -201,21 +193,30 @@ export default function Typing({
       }
 
       const currentWord: string = words[currentWordIndex];
+      const typedWordsArray: string[] = typedText.trim().split(" ");
 
       if (!startTime && e.key.length === 1) {
         setStartTime(Date.now());
       }
+
       if (e.key === " ") {
         if (currentLetterIndex > 0 && currentWordIndex < words.length - 1) {
           setCurrentWordIndex((prev) => prev + 1);
           setTypedText((prev) => prev.trim() + " ");
           setCurrentLetterIndex(0);
+
+          // Update completed words
+          const completed = typedWordsArray
+            .slice(0, currentWordIndex + 1)
+            .filter((typedWord, i) => typedWord === words[i]).length;
+          setCompletedWords(completed);
         } else if (
           currentWordIndex === words.length - 1 &&
           currentLetterIndex > 0 &&
           mode !== "time"
         ) {
           setIsCompleted(true);
+          setCompletedWords(totalWords);
         }
       } else if (e.key === "Backspace") {
         if (e.ctrlKey) {
@@ -229,6 +230,12 @@ export default function Typing({
             });
             setCurrentWordIndex((prev) => prev - 1);
             setCurrentLetterIndex(0);
+
+            // Recalculate completed words
+            const completed = typedWordsArray
+              .slice(0, currentWordIndex)
+              .filter((typedWord, i) => typedWord === words[i]).length;
+            setCompletedWords(completed);
           } else if (currentLetterIndex > 0) {
             setTypedText((prev) => {
               const wordsArray = prev.split(" ");
@@ -246,6 +253,12 @@ export default function Typing({
             setTypedText((prev) => prev.trim().slice(0, -1));
             const prevWord: string = words[currentWordIndex - 1];
             setCurrentLetterIndex(prevWord.length);
+
+            // Recalculate completed words
+            const completed = typedWordsArray
+              .slice(0, currentWordIndex)
+              .filter((typedWord, i) => typedWord === words[i]).length;
+            setCompletedWords(completed);
           }
         }
       } else if (
@@ -268,6 +281,8 @@ export default function Typing({
       words,
       mode,
       isTabPressed,
+      typedText,
+      totalWords,
     ]
   );
 
@@ -385,6 +400,7 @@ export default function Typing({
     setCurrentLetterIndex(0);
     setStartTime(null);
     setErrors(0);
+    setCompletedWords(0);
     setIsCompleted(false);
     wordRefs.current = Array(words.length).fill(null);
     setFinalWPM(0);
@@ -397,13 +413,21 @@ export default function Typing({
 
   return (
     <div className={styles.container}>
-      <Timer
-        mode={mode}
-        startTime={startTime}
-        duration={duration}
-        isCompleted={isCompleted}
-        setIsCompleted={setIsCompleted}
-      />
+      {mode === "time" ? (
+        <Timer
+          mode={mode}
+          startTime={startTime}
+          duration={duration}
+          isCompleted={isCompleted}
+          setIsCompleted={setIsCompleted}
+        />
+      ) : mode === "words" || mode === "quote" ? (
+        <WordProgress
+          completedWords={completedWords}
+          totalWords={totalWords}
+          startTime={startTime}
+        />
+      ) : null}
       {!isCompleted ? (
         words.length > 0 ? (
           <>

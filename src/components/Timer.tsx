@@ -20,10 +20,15 @@ const Timer = ({
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    if (!startTime || isCompleted) {
+      setTimeLeft(duration);
+      setIsTimerActive(false);
+      return;
+    }
+
     if (mode === "time" && startTime && !isCompleted) {
       setIsTimerActive(true);
-      timer = setInterval(() => {
+      const timer = setInterval(() => {
         const elapsed = Math.floor(Date.now() - startTime) / 1000;
         const remaining = duration - Math.floor(elapsed);
         setTimeLeft(remaining);
@@ -34,8 +39,8 @@ const Timer = ({
           clearInterval(timer);
         }
       }, 1000);
+      return () => clearInterval(timer);
     }
-    return () => clearInterval(timer);
   }, [startTime, mode, duration, isCompleted, setIsCompleted]);
 
   return (
