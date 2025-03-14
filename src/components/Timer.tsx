@@ -38,16 +38,19 @@ const Timer = ({
     return () => clearInterval(timer);
   }, [startTime, mode, duration, isCompleted, setIsCompleted]);
 
-  return mode === "time" && !isCompleted && isTimerActive ? (
+  return (
     <div
       className="timer"
       style={{
-        visibility: isCompleted && isTimerActive ? "visible" : "hidden",
+        visibility:
+          mode === "time" && !isCompleted && isTimerActive
+            ? "visible"
+            : "hidden",
       }}
     >
       {timeLeft}
     </div>
-  ) : null;
+  );
 };
 
 export default Timer;

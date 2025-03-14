@@ -36,12 +36,12 @@
   margin-right: 1rem;
   position: relative;
 }
-.timer {
+/* .timer {
   font-size: 2rem;
   color: var(--accent-color);
   margin-bottom: 10px;
   align-self: baseline;
-}
+} */
 .letter {
   display: inline-block;
   position: relative;
