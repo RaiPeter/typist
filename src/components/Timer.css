@@ -1,0 +1,7 @@
+.timer {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    align-self: baseline;
+    text-align: left;
+  }

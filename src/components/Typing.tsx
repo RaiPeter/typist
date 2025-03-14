@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import styles from "./typing.module.css";
 import { RiResetRightLine } from "react-icons/ri";
 import Results from "./Results";
+import Timer from "./Timer";
 
 interface WordProps {
   word: string;
@@ -45,10 +46,8 @@ export default function Typing({
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
   const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number>(duration);
   const [errors, setErrors] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
-  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [isBlurred, setIsBlurred] = useState<boolean>(false);
   const [isTabPressed, setIsTabPressed] = useState<boolean>(false);
 
@@ -60,26 +59,6 @@ export default function Typing({
   useEffect(() => {
     resetTest();
   }, [text, mode]);
-
-  // timer for time mode
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (mode === "time" && startTime && !isCompleted) {
-      setIsTimerActive(true);
-      timer = setInterval(() => {
-        const elapsed = Math.floor(Date.now() - startTime) / 1000;
-        const remaining = duration - Math.floor(elapsed);
-        setTimeLeft(remaining);
-
-        if (remaining <= 0) {
-          setIsCompleted(true);
-          setIsTimerActive(false);
-          clearInterval(timer);
-        }
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [startTime, mode, duration, isCompleted]);
 
   // auto scroll
   useLayoutEffect(() => {
@@ -316,10 +295,8 @@ export default function Typing({
     setCurrentWordIndex(0);
     setCurrentLetterIndex(0);
     setStartTime(null);
-    setTimeLeft(duration);
     setErrors(0);
     setIsCompleted(false);
-    setIsTimerActive(false);
     wordRefs.current = Array(words.length).fill(null);
     console.log("reset test");
   };
@@ -330,16 +307,13 @@ export default function Typing({
 
   return (
     <div className={styles.container}>
-      {mode === "time" && (
-        <div
-          className={styles.timer}
-          style={{
-            visibility: !isCompleted && isTimerActive ? "visible" : "hidden",
-          }}
-        >
-          {timeLeft}
-        </div>
-      )}
+      <Timer
+        mode={mode}
+        startTime={startTime}
+        duration={duration}
+        isCompleted={isCompleted}
+        setIsCompleted={setIsCompleted}
+      />
       {!isCompleted ? (
         words.length > 0 ? (
           <>
