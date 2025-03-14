@@ -81,7 +81,7 @@ const Page = () => {
   useEffect(()=>{
     let generatedText: string = "";
     if(mode === "time" || mode === "words"){
-      const count = mode === "time" ? 100 : wordcount;
+      const count = mode === "time" ? 500 : wordcount;
       generatedText = generateRandomWords(count, includeNumbers, includePunctuation);
     }else if(mode === "quote"){
       generatedText = quotes[Math.floor(Math.random() * quotes.length)]
@@ -176,9 +176,9 @@ const Page = () => {
             <div>
               <button><MdOutlineEmail /> contact</button>
               <button><FaDonate /> support</button>
-              <Link href={""}><FaCode /> github</Link>
+              <Link href={"https://github.com/RaiPeter"}><FaCode /> github</Link>
               <Link href={""}><FaDiscord /> discord</Link>
-              <Link href={""}><FaTwitter /> twitter</Link>
+              <Link href={"https://x.com/RaiPeter2"}><FaTwitter /> twitter</Link>
               <Link href={""}><FaRegFilePdf  /> terms</Link>
               <Link href={""}><MdOutlineSecurity /> security</Link>
               <Link href={""}><FaLock /> privacy</Link>
