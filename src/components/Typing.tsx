@@ -37,6 +37,7 @@ interface TypingProps {
   modeBarRef: React.RefObject<HTMLDivElement>;
   footerLinkRef: React.RefObject<HTMLDivElement>;
   onTestActiveChange?: (isActive: boolean) => void;
+  onResetText?: () => string;
 }
 
 const TextContainer: React.FC<{
@@ -88,6 +89,7 @@ export default function Typing({
   modeBarRef,
   footerLinkRef,
   onTestActiveChange,
+  onResetText,
 }: TypingProps) {
   const words: string[] = text.split(" ");
   const totalWords: number = words.length;
@@ -182,7 +184,7 @@ export default function Typing({
       // Reset test when Tab + Enter are pressed
       if (e.key === "Enter" && isTabPressed) {
         console.log("Tab + Enter detected, resetting test");
-        resetTest();
+        resetTest(true);
         setIsTabPressed(false); // Reset Tab state after reset
         return;
       }
@@ -394,7 +396,7 @@ export default function Typing({
     }
   }, [isCompleted, startTime]);
 
-  const resetTest = (): void => {
+  const resetTest = (regenerateText: boolean = false): void => {
     setTypedText("");
     setCurrentWordIndex(0);
     setCurrentLetterIndex(0);
@@ -404,6 +406,9 @@ export default function Typing({
     setIsCompleted(false);
     wordRefs.current = Array(words.length).fill(null);
     setFinalWPM(0);
+    if (regenerateText && onResetText) {
+      onResetText();
+    }
     console.log("reset test");
   };
 
@@ -442,7 +447,10 @@ export default function Typing({
               wordRefs={wordRefs}
               renderWord={renderWord}
             />
-            <button className={styles.resetButton} onClick={resetTest}>
+            <button
+              className={styles.resetButton}
+              onClick={() => resetTest(true)}
+            >
               <RiResetRightLine />
             </button>
           </>
@@ -454,7 +462,7 @@ export default function Typing({
           wpm={finalWPM}
           errors={errors}
           typedText={typedText}
-          onReset={resetTest}
+          onReset={() => resetTest(true)}
         />
       )}
     </div>
