@@ -2,14 +2,25 @@
     /* background-color: rgb(160, 160, 220); */
     padding: 30px 0;
 }
+.header nav > div:first-child{
+    display: flex;
+    align-items: anchor-center;
+}
 .header nav > div:nth-child(1) > a:nth-child(1) > svg{    
     color: var(--accent-color);
     background-color: var(--accent-color);
     margin-right: 5px;
     border-radius: 8px;
 }
-.header nav > div:nth-child(1) > a:nth-child(1){
+.header #top{
+    font-size: 0.4em;
+    position: absolute;
+    left: 3.6em;
+    top: -0.50em;
+}
+.header nav > div:nth-child(1) > a:first-child:not(#top){
     font-size: 2em;
+    position: relative;
 }
 .header nav svg {
     /* font-size: 1em; */
