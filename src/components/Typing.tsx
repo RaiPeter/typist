@@ -40,7 +40,7 @@ interface TypingProps {
   onResetText?: () => string;
 }
 
-const TextContainer: React.FC<{
+const TextContainerComponent: React.FC<{
   words: string[];
   typedWords: string[];
   currentWordIndex: number;
@@ -50,37 +50,37 @@ const TextContainer: React.FC<{
   textContainerRef: React.RefObject<HTMLDivElement>;
   wordRefs: React.MutableRefObject<(HTMLSpanElement | null)[]>;
   renderWord: (props: WordProps) => JSX.Element | null;
-}> = React.memo(
-  ({
-    words,
-    typedWords,
-    currentWordIndex,
-    currentLetterIndex,
-    isCompleted,
-    isBlurred,
-    textContainerRef,
-    wordRefs,
-    renderWord,
-  }) => {
-    return (
-      <div
-        className={`${styles.text} ${isBlurred ? styles.blurred : ""}`}
-        ref={textContainerRef}
-      >
-        {words.map((word, i) =>
-          renderWord({
-            word,
-            wordIndex: i,
-            typedWords,
-            currentWordIndex,
-            currentLetterIndex,
-            isCompleted,
-          })
-        )}
-      </div>
-    );
-  }
-);
+}> = ({
+  words,
+  typedWords,
+  currentWordIndex,
+  currentLetterIndex,
+  isCompleted,
+  isBlurred,
+  textContainerRef,
+  wordRefs,
+  renderWord,
+}) => {
+  return (
+    <div
+      className={`${styles.text} ${isBlurred ? styles.blurred : ""}`}
+      ref={textContainerRef}
+    >
+      {words.map((word, i) =>
+        renderWord({
+          word,
+          wordIndex: i,
+          typedWords,
+          currentWordIndex,
+          currentLetterIndex,
+          isCompleted,
+        })
+      )}
+    </div>
+  );
+};
+
+const TextContainer = React.memo(TextContainerComponent);
 
 export default function Typing({
   text,
@@ -132,7 +132,7 @@ export default function Typing({
         block: "center",
       });
     }
-  }, [currentWordIndex, words]);
+  }, [currentWordIndex]);
 
   // auto scroll
   useLayoutEffect(() => {
@@ -394,7 +394,7 @@ export default function Typing({
       const wpm = calculateWPM();
       setFinalWPM(wpm);
     }
-  }, [isCompleted, startTime]);
+  }, [isCompleted, startTime, calculateWPM]);
 
   const resetTest = (regenerateText: boolean = false): void => {
     setTypedText("");
