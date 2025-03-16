@@ -106,6 +106,7 @@ export default function Typing({
   const [isTabPressed, setIsTabPressed] = useState<boolean>(false);
   const [finalWPM, setFinalWPM] = useState<number>(0);
   const [completedWords, setCompletedWords] = useState<number>(0);
+  const [currentWordErrors, setCurrentWordErrors] = useState<number>(0);
 
   // ref for container
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -203,6 +204,20 @@ export default function Typing({
 
       if (e.key === " ") {
         if (currentLetterIndex > 0 && currentWordIndex < words.length - 1) {
+          const typedWord = typedWordsArray[currentWordIndex] || "";
+          let wordErrors = 0;
+          for (let i = 0; i < currentWord.length; i++) {
+            if (typedWord[i] && typedWord[i] !== currentWord[i]) {
+              wordErrors++;
+            }
+          }
+          // Add extra characters as errors if typedWord is longer
+          if (typedWord.length > currentWord.length) {
+            wordErrors += typedWord.length - currentWord.length;
+          }
+          setErrors((prev) => prev + wordErrors);
+          setCurrentWordErrors(0);
+
           setCurrentWordIndex((prev) => prev + 1);
           setTypedText((prev) => prev.trim() + " ");
           setCurrentLetterIndex(0);
@@ -217,6 +232,20 @@ export default function Typing({
           currentLetterIndex > 0 &&
           mode !== "time"
         ) {
+          // Finalize errors for the last word when test completes
+          const typedWord = typedWordsArray[currentWordIndex] || "";
+          let wordErrors = 0;
+          for (let i = 0; i < currentWord.length; i++) {
+            if (typedWord[i] && typedWord[i] !== currentWord[i]) {
+              wordErrors++;
+            }
+          }
+          if (typedWord.length > currentWord.length) {
+            wordErrors += typedWord.length - currentWord.length;
+          }
+          setErrors((prev) => prev + wordErrors);
+          setCurrentWordErrors(0);
+
           setIsCompleted(true);
           setCompletedWords(totalWords);
         }
@@ -232,6 +261,7 @@ export default function Typing({
             });
             setCurrentWordIndex((prev) => prev - 1);
             setCurrentLetterIndex(0);
+            setCurrentWordErrors(0);
 
             // Recalculate completed words
             const completed = typedWordsArray
@@ -245,16 +275,23 @@ export default function Typing({
               return wordsArray.join(" ").trim();
             });
             setCurrentLetterIndex(0);
+            setCurrentWordErrors(0);
           }
         } else {
           if (currentLetterIndex > 0) {
-            setTypedText((prev) => prev.slice(0, -1));
+            const lastTypedChar = typedText[typedText.length - 1];
+            const expectedChar = currentWord[currentLetterIndex - 1];
+            if (lastTypedChar !== expectedChar && currentWordErrors > 0) {
+              setCurrentWordErrors((prev) => prev - 1); // Reduce temp errors if correcting a mistake
+            }
+            setTypedText((prev) => prev.slice(0, - 1));
             setCurrentLetterIndex((prev) => prev - 1);
           } else if (currentWordIndex > 0 && typedText.endsWith(" ")) {
             setCurrentWordIndex((prev) => prev - 1);
-            setTypedText((prev) => prev.trim().slice(0, -1));
+            setTypedText((prev) => prev.trim().slice(0));
             const prevWord: string = words[currentWordIndex - 1];
             setCurrentLetterIndex(prevWord.length);
+            setCurrentWordErrors(0);
 
             // Recalculate completed words
             const completed = typedWordsArray
@@ -269,7 +306,7 @@ export default function Typing({
       ) {
         const expectedLetter: string = currentWord[currentLetterIndex];
         if (e.key !== expectedLetter) {
-          setErrors((prev) => prev + 1);
+          setCurrentWordErrors((prev) => prev + 1);
         }
         setTypedText((prev) => prev + e.key);
         setCurrentLetterIndex((prev) => prev + 1);
@@ -394,13 +431,14 @@ export default function Typing({
       const wpm = calculateWPM();
       setFinalWPM(wpm);
     }
-  }, [isCompleted, startTime, calculateWPM]);
+  }, [isCompleted, startTime]);
 
   const resetTest = (regenerateText: boolean = false): void => {
     setTypedText("");
     setCurrentWordIndex(0);
     setCurrentLetterIndex(0);
     setStartTime(null);
+    setCurrentWordErrors(0);
     setErrors(0);
     setCompletedWords(0);
     setIsCompleted(false);

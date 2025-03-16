@@ -92,7 +92,7 @@ const Page = () => {
     };
   }, [isModalOpen]);
 
-  useEffect(() => {
+  const generateText = () => {
     let generatedText: string = "";
 
     if (mode === "time" || mode === "words") {
@@ -138,7 +138,16 @@ const Page = () => {
     }
     console.log("Generated Text:", generatedText);
     setText(generatedText);
+    return generatedText;
+  }
+
+  useEffect(() => {
+    generateText();
   }, [mode, wordcount, includeNumbers, includePunctuation, quoteLength]);
+
+  const handleResetText = () => {
+    return generateText();
+  };
 
   const typingProps = useMemo(
     () => ({
@@ -148,6 +157,7 @@ const Page = () => {
       modeBarRef,
       footerLinkRef,
       onTestActiveChange: setIsTestActive,
+      onResetText: handleResetText,
     }),
     [text, mode, duration]
   );

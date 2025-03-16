@@ -1,4 +1,5 @@
-import React from "react";
+'use client';
+import React, { useCallback, useEffect } from "react";
 import { RiResetRightLine } from "react-icons/ri";
 import "./Results.css";
 
@@ -10,6 +11,29 @@ interface ResultProps {
 }
 
 const Results = ({ wpm, errors, typedText, onReset }: ResultProps) => {
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const handleEnterKey = (event: KeyboardEvent) => {
+          if (event.key === "Enter") {
+            onReset();
+            document.removeEventListener("keydown", handleEnterKey);
+          }
+        };
+        document.addEventListener("keydown", handleEnterKey);
+      }
+    },
+    [onReset]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+  
   return (
     <div className="results">
       <div>
