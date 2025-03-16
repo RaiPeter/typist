@@ -112,9 +112,24 @@ export default function Typing({
   const textContainerRef = useRef<HTMLDivElement>(null);
   // ref for each word
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Determine if the test is active
   const isTestActive = !!startTime && !isCompleted;
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  useEffect(() => {
+    if (isMobile && inputRef.current && !isCompleted) {
+      inputRef.current.focus();
+    }
+  }, [isMobile, isCompleted]);
+
+  const handleContainerClick = () => {
+    if (isMobile && inputRef.current && !isCompleted && !isTestActive) {
+      inputRef.current.focus();
+    }
+  };
 
   // Notify parent when test active state changes
   useEffect(() => {
@@ -157,13 +172,16 @@ export default function Typing({
       if (isClickInsideText) {
         console.log("Click inside text container, removing blur");
         setIsBlurred(false);
+        if (isMobile && inputRef.current) {
+          inputRef.current.focus(); // Re-focus input on mobile
+        }
       } else if (isClickInsideModeBar || isClickInsideFooterLink) {
         // nothing
       } else {
         setIsBlurred(true);
       }
     },
-    [modeBarRef, footerLinkRef]
+    [modeBarRef, footerLinkRef, isMobile]
   );
 
   useEffect(() => {
@@ -447,6 +465,9 @@ export default function Typing({
     if (regenerateText && onResetText) {
       onResetText();
     }
+    if (isMobile && inputRef.current) {
+      inputRef.current.focus(); // Re-focus input after reset on mobile
+    }
     console.log("reset test");
   };
 
@@ -455,7 +476,24 @@ export default function Typing({
     .filter((word) => word.length > 0);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={handleContainerClick}>
+      {isMobile && (
+        <input
+          ref={inputRef}
+          type="text"
+          style={{
+            position: "absolute",
+            opacity: 0,
+            width: 0,
+            height: 0,
+            pointerEvents: "none",
+          }}
+          onKeyDown={(e) => {
+            // Prevent input from capturing events; let document handle them
+            e.stopPropagation();
+          }}
+        />
+      )}
       {mode === "time" ? (
         <Timer
           mode={mode}
