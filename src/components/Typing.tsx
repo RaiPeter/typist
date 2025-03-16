@@ -93,8 +93,6 @@ export default function Typing({
 }: TypingProps) {
   const words: string[] = text.split(" ");
   const totalWords: number = words.length;
-  console.log("Typing Component - Received Text:", text);
-  console.log("Typing Component - Words Array:", words);
 
   const [typedText, setTypedText] = useState<string>("");
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
@@ -170,7 +168,6 @@ export default function Typing({
         footerLinkRef.current && footerLinkRef.current.contains(target);
 
       if (isClickInsideText) {
-        console.log("Click inside text container, removing blur");
         setIsBlurred(false);
         if (isMobile && inputRef.current) {
           inputRef.current.focus(); // Re-focus input on mobile
@@ -202,7 +199,6 @@ export default function Typing({
 
       // Reset test when Tab + Enter are pressed
       if (e.key === "Enter" && isTabPressed) {
-        console.log("Tab + Enter detected, resetting test");
         resetTest(true);
         setIsTabPressed(false); // Reset Tab state after reset
         return;
@@ -359,9 +355,9 @@ export default function Typing({
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  useEffect(() => {
-    console.log({ typedText, currentWordIndex, currentLetterIndex });
-  }, [typedText, currentWordIndex, currentLetterIndex]);
+  // useEffect(() => {
+  //   console.log({ typedText, currentWordIndex, currentLetterIndex });
+  // }, [typedText, currentWordIndex, currentLetterIndex]);
 
   const renderLetter = ({
     letter,
@@ -468,7 +464,6 @@ export default function Typing({
     if (isMobile && inputRef.current) {
       inputRef.current.focus(); // Re-focus input after reset on mobile
     }
-    console.log("reset test");
   };
 
   const typedWords: string[] = typedText

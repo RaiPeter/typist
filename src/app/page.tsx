@@ -136,7 +136,6 @@ const Page = () => {
       generatedText =
         "- you could type your custom text here if I had implemented it lol";
     }
-    console.log("Generated Text:", generatedText);
     setText(generatedText);
     return generatedText;
   }

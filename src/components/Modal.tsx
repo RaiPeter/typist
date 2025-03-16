@@ -20,7 +20,6 @@ const Modal = ({ setCurrentTheme }: Prop) => {
   const handleTheme = (e: React.MouseEvent<HTMLLabelElement>) => {
     const label = (e.target as HTMLLabelElement).innerText;
     setModalTheme(label);
-    console.log(label);
     document.documentElement.setAttribute("data-theme", label);
     localStorage.setItem("theme", label);
     setCurrentTheme(label);
